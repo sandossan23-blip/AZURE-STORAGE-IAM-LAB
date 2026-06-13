@@ -28,7 +28,7 @@ Role-Based Access Control (RBAC - Modern Best Practice): Completely keyless acce
 
 🛠️ Tech Stack & Environment
 
-Operating System: Ubuntu 20.04 LTS
+Operating System: Ubuntu 26.04 LTS
 
 Command Line Interface: Bash / Azure CLI (az cli)
 
@@ -73,7 +73,7 @@ az storage blob upload \
 
 🔐 IAM Authentication Analysis & Verification
 
-Method B: Scoped Shared Access Signatures (SAS)
+Method A: Scoped Shared Access Signatures (SAS)
 
 We generated a time-bound, read-only SAS token expiring in a restricted window to securely delegate temporary access to a single file:
 
@@ -94,7 +94,7 @@ echo "https://stiamlab11758.blob.core.windows.net/finance-records/payroll-ledger
 
 Verification Output: Pasting the resulting SAS URL into an external browser successfully allowed download of the raw private text file, confirming operational delegation boundaries.
 
-Method A: Shared Key Extraction (Legacy)
+Method B: Shared Key Extraction (Legacy)
 
 We retrieved the primary account key to verify legacy configuration support:
 
