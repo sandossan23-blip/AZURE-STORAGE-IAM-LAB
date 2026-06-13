@@ -28,7 +28,7 @@ Role-Based Access Control (RBAC - Modern Best Practice): Completely keyless acce
 
 🛠️ Tech Stack & Environment
 
-Operating System: Ubuntu 20.04 LTS
+Operating System: Ubuntu 26.04 LTS
 
 Command Line Interface: Bash / Azure CLI (az cli)
 
