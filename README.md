@@ -38,10 +38,12 @@ Identity Provider: Microsoft Entra ID (Azure Active Directory)
 
 💻 Technical Implementation Steps
 
-Step 1: Secure Storage Provisioning
+'''markdown
+### Step 1: Secure Storage Provisioning
 
 We provisioned a standard locally redundant storage (LRS) workspace with public network access strictly disabled to align with zero-trust network boundary defense:
 
+'''bash
 # Create the resource group
 az group create --name rg-iam-storage-lab --location eastus
 
@@ -53,11 +55,11 @@ az storage account create \
   --sku Standard_LRS \
   --allow-blob-public-access false
 
-
-Step 2: Data Ingestion & Container Locking
+'''markdown
+### Step 2: Data Ingestion & Container Locking
 
 We created a private container named finance-records and ingested a mock confidential ledger:
-
+'''bash
 # Create the secure container
 az storage container create \
   --name finance-records \
@@ -73,10 +75,12 @@ az storage blob upload \
 
 🔐 IAM Authentication Analysis & Verification
 
-Method A: Scoped Shared Access Signatures (SAS)
+'''markdown
+### Method A: Scoped Shared Access Signatures (SAS)
 
 We generated a time-bound, read-only SAS token expiring in a restricted window to securely delegate temporary access to a single file:
 
+'''bash
 EXPIRY="2026-06-14T23:59:59Z"
 
 SAS_TOKEN=$(az storage blob generate-sas \
@@ -94,10 +98,12 @@ echo "https://stiamlab11758.blob.core.windows.net/finance-records/payroll-ledger
 
 Verification Output: Pasting the resulting SAS URL into an external browser successfully allowed download of the raw private text file, confirming operational delegation boundaries.
 
-Method B: Shared Key Extraction (Legacy)
+'''markdown
+### Method B: Shared Key Extraction (Legacy)
 
 We retrieved the primary account key to verify legacy configuration support:
 
+'''bash
 az storage account keys list \
   --account-name stiamlab11758 \
   --resource-group rg-iam-storage-lab \
@@ -107,10 +113,12 @@ az storage account keys list \
 
 IAM Security Analysis: While straightforward, shared keys represent a legacy security vulnerability. They cannot be restricted to specific files, cannot be IP-restricted, and rotating a compromised key immediately breaks all integrated applications.
 
-Method C: Enterprise Role-Based Access Control (RBAC)
+'''markdown
+### Method C: Enterprise Role-Based Access Control (RBAC)
 
 We assigned the industry-standard Storage Blob Data Reader role directly to our Entra ID security principal, allowing secure access without managing secret keys or tokens:
 
+'''bash
 # Retrieve the logged-in user principal name
 USER_EMAIL=$(az ad signed-in-user show --query userPrincipalName --output tsv)
 
@@ -123,12 +131,16 @@ az role assignment create \
 
 IAM Security Analysis: This represents true modern identity management. Access tokens are negotiated automatically on the fly via Active Directory. No keys or static tokens are embedded in applications, dramatically reducing secret exposure and aligning with the core Principle of Least Privilege.
 
+'''markdown
 🔍 Verification Evidence
 
-Method B Verification: Time-Bound SAS Access
-
+### Method A Verification: Time-Bound SAS Access
 Below is verification of the browser successfully accessing the secure data container using only the scoped SAS token:
+![SAS Browser Access Verification](sas-token-success.png)
 
-Method C Verification: Keyless RBAC Handshake
+### Method C Verification: Keyless RBAC Handshake
 
 Below is the successful JSON response payload from Azure confirming that the Storage Blob Data Reader RBAC role mapping is fully active:
+
+![RBAC Role Assignment Verification](rbac-success.png)
+
